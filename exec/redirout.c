@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   write_in_outfile.c                                 :+:      :+:    :+:   */
+/*   redirout.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mfusil <mfusil@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 15:17:27 by mfusil            #+#    #+#             */
-/*   Updated: 2023/02/27 15:56:14 by mfusil           ###   ########.fr       */
+/*   Updated: 2023/02/27 16:51:47 by mfusil           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	write_in_outfile(t_var *shell, char *str, int *outfiles, int outfile)
 	int	i;
 
 	i = 1;
-	str = get_next_line(outfile);
 	while (str)
 	{
 		while (i != ft_lstsize((shell)->redir_output)
@@ -34,12 +33,13 @@ void	write_in_outfile(t_var *shell, char *str, int *outfiles, int outfile)
 void	redirout(int *outfiles, t_var *shell)
 {
 	char	*str;
+	int		i;
 	int		outfile;
 	int		flag;
 	int		tmp;
 
-	outfile = 0;
-	str = NULL;
+	i = 1;
+	flag = 0;
 	tmp = outfiles[0];
 	close(outfiles[0]);
 	if (shell->redir_output)
@@ -50,5 +50,6 @@ void	redirout(int *outfiles, t_var *shell)
 	}
 	if (shell->redir_output && flag != 1)
 		outfile = open((shell)->redir_output->content, O_RDONLY);
+	str = get_next_line(outfile);
 	write_in_outfile(shell, str, outfiles, outfile);
 }

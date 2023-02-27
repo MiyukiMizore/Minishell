@@ -6,7 +6,7 @@
 /*   By: mfusil <mfusil@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 18:38:11 by mfusil            #+#    #+#             */
-/*   Updated: 2023/02/27 15:56:58 by mfusil           ###   ########.fr       */
+/*   Updated: 2023/02/27 16:51:53 by mfusil           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int		builtin_no_fork(t_var *shell, char ***tmp_env);
 void	redirection_outfile(t_var **shell, int **files);
 int		redirection_infile(t_var **shell);
 int		verif_fd(int fd);
+void	write_in_outfile(t_var *shell, char *str, int *outfiles, int outfile);
 void	redirout(int *outfiles, t_var *shell);
 int		builtin_fork(t_var *shell, char **tmp_env);
 
