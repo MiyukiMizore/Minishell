@@ -6,7 +6,7 @@
 /*   By: mfusil <mfusil@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 14:28:30 by mfusil            #+#    #+#             */
-/*   Updated: 2023/02/27 16:51:43 by mfusil           ###   ########.fr       */
+/*   Updated: 2023/02/28 11:03:33 by mfusil           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	parent_process(t_var *shell, int tmp)
 	wait(NULL);
 }
 
-int process(t_var *shell, char **tmp_env, int tmp, int *outfiles, int infiles)
+int	process(t_var *shell, char **tmp_env, t_file files)
 {
 	pid_t	pid;
 	int		status;
@@ -71,11 +71,11 @@ int process(t_var *shell, char **tmp_env, int tmp, int *outfiles, int infiles)
 	if (pid == 0)
 	{
 		if (shell->redir_input)
-			dup2(infiles, STDIN_FILENO);
+			dup2(files.infiles, STDIN_FILENO);
 		else
-			dup2(tmp, STDIN_FILENO);
+			dup2(files.savein, STDIN_FILENO);
 		if (shell->next && shell->redir_output)
-			dup2(outfiles[0], STDOUT_FILENO);
+			dup2(files.outfiles[0], STDOUT_FILENO);
 		else if (shell->next)
 			dup2(shell->pipe[1], STDOUT_FILENO);
 		close(shell->pipe[0]);
@@ -83,21 +83,17 @@ int process(t_var *shell, char **tmp_env, int tmp, int *outfiles, int infiles)
 		exit(1);
 	}
 	else
-		parent_process(shell, tmp);
+		parent_process(shell, files.savein);
 	return (status);
 }
 
 void	exec(t_var **shell, char ***tmp_env)
 {
-	int		i;
-	int		infiles;
-	int		*outfiles;
 	t_var	*tmp2;
+	t_file	files;
 
-	i = 0;
+	files = init_files(shell);
 	tmp2 = *shell;
-	outfiles = malloc(sizeof(int) * (ft_lstsize((*shell)->redir_output)
-				+ ft_lstsize((*shell)->redir_append)));
 	if (!builtin_no_fork(*shell, tmp_env))
 		return ;
 	else
@@ -105,73 +101,15 @@ void	exec(t_var **shell, char ***tmp_env)
 		while (tmp2)
 		{
 			if ((tmp2)->redir_input)
-			{
 				while ((tmp2)->redir_input)
-				{
-					infiles = redirection_infile(&tmp2);
-					if (infiles == 1)
-						return ;
-					if (tmp2->redir_output || tmp2->redir_append)
-					{
-						(*shell)->save_output = dup(STDOUT_FILENO);
-						close(STDOUT_FILENO);
-						redirection_outfile(&tmp2, &outfiles);
-						dup2(outfiles[0], STDOUT_FILENO);
-					}
-					process(tmp2, *tmp_env, (*shell)->save_input, outfiles, infiles);
-					close(infiles);
-					if (tmp2->redir_output || tmp2->redir_append)
-						redirout(outfiles, tmp2);
-					while (i != ft_lstsize((tmp2)->redir_output)
-						+ ft_lstsize((tmp2)->redir_append))
-					{
-						close(outfiles[i]);
-						i++;
-					}
-					if (tmp2->redir_output || tmp2->redir_append)
-						dup2((*shell)->save_output, STDOUT_FILENO);
-					(tmp2)->redir_input = (tmp2)->redir_input->next;
-				}
-			}
+					infiles(tmp2, files, tmp_env);
 			else if ((tmp2)->redir_hdoc)
-			{
-				if (tmp2->redir_output || tmp2->redir_append)
-				{
-					(*shell)->save_output = dup(STDOUT_FILENO);
-					close(STDOUT_FILENO);
-					redirection_outfile(&tmp2, &outfiles);
-					dup2(outfiles[0], STDOUT_FILENO);
-				}
-				redirection_hdoc(tmp2->redir_hdoc->content);
-				while (i != ft_lstsize((tmp2)->redir_output)
-					+ ft_lstsize((tmp2)->redir_append))
-				{
-					close(outfiles[i]);
-					i++;
-				}
-				if (tmp2->redir_output || tmp2->redir_append)
-					dup2((*shell)->save_output, STDOUT_FILENO);
-				process(tmp2, *tmp_env, (*shell)->save_input, outfiles, infiles);
-			}
+				heredoc(tmp2, files, tmp_env);
 			else if ((tmp2->redir_output || tmp2->redir_append)
 				&& !tmp2->redir_input)
-			{
-				(*shell)->save_output = dup(STDOUT_FILENO);
-				close(STDOUT_FILENO);
-				redirection_outfile(&tmp2, &outfiles);
-				dup2(outfiles[0], STDOUT_FILENO);
-				process(tmp2, *tmp_env, (*shell)->save_input, outfiles, infiles);
-				redirout(outfiles, tmp2);
-				while (i != ft_lstsize((tmp2)->redir_output)
-					+ ft_lstsize((tmp2)->redir_append))
-				{
-					close(outfiles[i]);
-					i++;
-				}
-				dup2((*shell)->save_output, STDOUT_FILENO);
-			}
+				outfile(tmp2, files, tmp_env);
 			else
-				process(tmp2, *tmp_env, (*shell)->save_input, outfiles, infiles);
+				process(tmp2, *tmp_env, files);
 			tmp2 = tmp2->next;
 		}
 	}

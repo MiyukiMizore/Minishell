@@ -6,7 +6,7 @@
 #    By: mfusil <mfusil@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/20 18:45:16 by mfusil            #+#    #+#              #
-#    Updated: 2023/02/27 15:56:35 by mfusil           ###   ########.fr        #
+#    Updated: 2023/02/28 10:46:19 by mfusil           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,8 @@ EXEC = exec/exec.c\
 	   exec/redirect.c\
 	   exec/builtin_no_fork.c\
 	   exec/verif_fd.c\
-	   exec/redirout.c
+	   exec/redirout.c\
+	   exec/exec2.c
 
 BUILTINS = builtins/pwd.c\
 		   builtins/env.c\
