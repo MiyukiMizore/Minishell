@@ -6,7 +6,7 @@
 /*   By: mfusil <mfusil@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 10:45:04 by mfusil            #+#    #+#             */
-/*   Updated: 2023/02/28 11:02:32 by mfusil           ###   ########.fr       */
+/*   Updated: 2023/02/28 15:41:12 by mfusil           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,12 @@ void	heredoc(t_var *tmp2, t_file files, char ***tmp_env)
 	process(tmp2, *tmp_env, files);
 }
 
-void	infiles(t_var *tmp2, t_file files, char ***tmp_env)
+int	infiles(t_var *tmp2, t_file files, char ***tmp_env)
 {
 	files.i = 0;
 	files.infiles = redirection_infile(&tmp2);
 	if (files.infiles == 1)
-		return ;
+		return (1);
 	if (tmp2->redir_output || tmp2->redir_append)
 	{
 		files.saveout = dup(STDOUT_FILENO);
@@ -78,4 +78,5 @@ void	infiles(t_var *tmp2, t_file files, char ***tmp_env)
 	if (tmp2->redir_output || tmp2->redir_append)
 		dup2(files.saveout, STDOUT_FILENO);
 	(tmp2)->redir_input = (tmp2)->redir_input->next;
+	return (0);
 }

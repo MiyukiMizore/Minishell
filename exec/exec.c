@@ -6,7 +6,7 @@
 /*   By: mfusil <mfusil@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 14:28:30 by mfusil            #+#    #+#             */
-/*   Updated: 2023/02/28 11:03:33 by mfusil           ###   ########.fr       */
+/*   Updated: 2023/02/28 16:23:15 by mfusil           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,11 @@ char	**ft_create_tab(t_var *shell)
 	i = 1;
 	while (shell->flag)
 	{
-		tmp[i] = shell->flag->content;
+		tmp[i++] = shell->flag->content;
 		shell->flag = shell->flag->next;
-		i++;
 	}
+	if (shell->string)
+		tmp[i++] = shell->string->content;
 	tmp[i] = NULL;
 	return (tmp);
 }
@@ -101,8 +102,11 @@ void	exec(t_var **shell, char ***tmp_env)
 		while (tmp2)
 		{
 			if ((tmp2)->redir_input)
+			{
 				while ((tmp2)->redir_input)
-					infiles(tmp2, files, tmp_env);
+					if (infiles(tmp2, files, tmp_env))
+						return ;
+			}
 			else if ((tmp2)->redir_hdoc)
 				heredoc(tmp2, files, tmp_env);
 			else if ((tmp2->redir_output || tmp2->redir_append)
