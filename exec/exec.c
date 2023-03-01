@@ -6,7 +6,7 @@
 /*   By: mfusil <mfusil@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 14:28:30 by mfusil            #+#    #+#             */
-/*   Updated: 2023/02/28 16:23:15 by mfusil           ###   ########.fr       */
+/*   Updated: 2023/03/01 11:44:07 by mfusil           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,16 +102,14 @@ void	exec(t_var **shell, char ***tmp_env)
 		while (tmp2)
 		{
 			if ((tmp2)->redir_input)
-			{
 				while ((tmp2)->redir_input)
-					if (infiles(tmp2, files, tmp_env))
+					if (infiles(&tmp2, &files, tmp_env))
 						return ;
-			}
-			else if ((tmp2)->redir_hdoc)
-				heredoc(tmp2, files, tmp_env);
+			if ((tmp2)->redir_hdoc)
+				heredoc(tmp2, &files, tmp_env);
 			else if ((tmp2->redir_output || tmp2->redir_append)
 				&& !tmp2->redir_input)
-				outfile(tmp2, files, tmp_env);
+				outfile(&tmp2, &files, tmp_env);
 			else
 				process(tmp2, *tmp_env, files);
 			tmp2 = tmp2->next;

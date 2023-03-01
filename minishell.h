@@ -6,7 +6,7 @@
 /*   By: mfusil <mfusil@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 18:38:11 by mfusil            #+#    #+#             */
-/*   Updated: 2023/02/28 15:41:50 by mfusil           ###   ########.fr       */
+/*   Updated: 2023/03/01 11:29:38 by mfusil           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,9 @@ int		verif_fd(int fd);
 void	write_in_outfile(t_var *shell, char *str, int *outfiles, int outfile);
 void	redirout(int *outfiles, t_var *shell);
 int		builtin_fork(t_var *shell, char **tmp_env);
-int		infiles(t_var *tmp2, t_file files, char ***tmp_env);
-void	heredoc(t_var *tmp2, t_file files, char ***tmp_env);
-void	outfile(t_var *tmp2, t_file files, char ***tmp_env);
+int		infiles(t_var **tmp2, t_file *files, char ***tmp_env);
+void	heredoc(t_var *tmp2, t_file *files, char ***tmp_env);
+void	outfile(t_var **tmp2, t_file *files, char ***tmp_env);
 int		process(t_var *shell, char **tmp_env, t_file files);
 
 //----------------structvar----------------//
